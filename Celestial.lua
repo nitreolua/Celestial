@@ -7,5 +7,21 @@ local Tab = Window:MakeTab({
     PremiumOnly = false
 })
 
+local Section = Tab:AddSection({
+    Name = "movement"
+})
 
-OrionLib:Init()
+OrionLib:MakeNotification({
+    Name = "Smertnix",
+    Content = "<3",
+    Image = "rbxassetid://4483345998",
+    Time = 5
+})
+
+Tab:AddButton({
+    Name = "inf yield",
+    Callback = function()
+
+    end
+})
+
