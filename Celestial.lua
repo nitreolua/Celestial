@@ -1,28 +1,18 @@
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-local Window = OrionLib:MakeWindow({Name = "CELESTIAL", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+local Window = OrionLib:MakeWindow({Name = "CELESTIAL", HidePremium = true, SaveConfig = true, ConfigFolder = "OrionTest"})
 
 local Tab = Window:MakeTab({
     Name = "main",
-    Icon = "rbxassetid://4483345998",
+    Icon = "rbxassetid://100899196287785",
     PremiumOnly = false
 })
 
-local Section = Tab:AddSection({
-    Name = "movement"
-})
-
-OrionLib:MakeNotification({
-    Name = "Smertnix",
-    Content = "<3",
-    Image = "rbxassetid://4483345998",
-    Time = 5
-})
-
 Tab:AddButton({
-    Name = "inf yield",
+    Name = "Infinite Yield",
     Callback = function()
-
+        loadstring(game:HttpGet(('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'),true))()
     end
 })
 
 OrionLib:Init()
+
