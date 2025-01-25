@@ -2,9 +2,18 @@ local GUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Patskorn/
 local idk = GUI:new()
 local win = idk:Tap("CELESTIAL")
 
--- Основное меню
-local mainFrame = win.Frame -- Фрейм меню (должен быть связан с твоим GUI)
-local exitButton = win:Button("Выход", function() end) -- Кнопка выхода
+-- Получаем основное меню
+local mainFrame = win.Frame
+local screenGui = mainFrame.Parent
+
+-- Создаём кнопку "Выход"
+local exitButton = Instance.new("TextButton")
+exitButton.Size = UDim2.new(0, 100, 0, 30)
+exitButton.Position = UDim2.new(0, 10, 1, -40) -- Внизу экрана
+exitButton.Text = "Выход"
+exitButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+exitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+exitButton.Parent = screenGui
 
 -- Переменные для перемещения
 local dragging = false
@@ -15,9 +24,9 @@ local isCollapsed = false
 local originalSize = mainFrame.Size
 local collapsedSize = UDim2.new(0, 50, 0, 50)
 
--- Функция перемещения
+-- Функция перемещения меню
 mainFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         dragging = true
         dragStart = input.Position
         startPos = mainFrame.Position
@@ -30,7 +39,7 @@ mainFrame.InputBegan:Connect(function(input)
 end)
 
 mainFrame.InputChanged:Connect(function(input)
-    if dragging and (input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement) then
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
         local delta = input.Position - dragStart
         mainFrame.Position = UDim2.new(
                 startPos.X.Scale,
@@ -41,57 +50,61 @@ mainFrame.InputChanged:Connect(function(input)
     end
 end)
 
--- Функция сворачивания/разворачивания
+-- Функция сворачивания/разворачивания меню
 exitButton.MouseButton1Click:Connect(function()
     if isCollapsed then
         mainFrame.Size = originalSize
+        mainFrame.Visible = true
     else
         mainFrame.Size = collapsedSize
+        mainFrame.Visible = false
     end
     isCollapsed = not isCollapsed
 end)
 
--- Элементы GUI
+-- Элементы интерфейса
 win:Button("button", function()
-    print("WTF")
+    print("Нажата кнопка!")
 end)
 
 win:Label("main")
 
-win:Toggle("toggle", false, function(Smentrix)
-    print(Smentrix)
+win:Toggle("toggle", false, function(state)
+    print("Состояние переключателя:", state)
 end)
 
--- Обновленный слайдер
-win:Slider("Slider", 0, 1000, 400, function(t)
-    print(t)
+-- Слайдер
+win:Slider("Slider", 0, 1000, 400, function(value)
+    print("Слайдер значение:", value)
 end)
 
--- Функция для поддержки ввода слайдера на телефоне
-local sliderFrame = mainFrame:FindFirstChild("Slider") -- Убедись, что слайдер связан с GUI
-local draggingSlider = false
+-- Логика для работы слайдера на телефоне
+local sliderFrame = mainFrame:FindFirstChild("Slider")
+if sliderFrame then
+    local draggingSlider = false
 
-sliderFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
-        draggingSlider = true
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                draggingSlider = false
-            end
-        end)
-    end
-end)
+    sliderFrame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            draggingSlider = true
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    draggingSlider = false
+                end
+            end)
+        end
+    end)
 
-sliderFrame.InputChanged:Connect(function(input)
-    if draggingSlider and (input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement) then
-        local sliderPosition = input.Position.X - sliderFrame.AbsolutePosition.X
-        local sliderWidth = sliderFrame.AbsoluteSize.X
-        local value = math.clamp(sliderPosition / sliderWidth, 0, 1) -- Нормализованное значение от 0 до 1
-        local finalValue = math.floor(value * (1000 - 0) + 0) -- Пересчет в диапазон слайдера
-        print(finalValue) -- Вывод значения
-    end
-end)
+    sliderFrame.InputChanged:Connect(function(input)
+        if draggingSlider and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local sliderPosition = input.Position.X - sliderFrame.AbsolutePosition.X
+            local sliderWidth = sliderFrame.AbsoluteSize.X
+            local normalizedValue = math.clamp(sliderPosition / sliderWidth, 0, 1)
+            local finalValue = math.floor(normalizedValue * 1000)
+            print("Слайдер значение (с телефона):", finalValue)
+        end
+    end)
+end
 
-win:Dropdown("dropdown", {"Option 1", "Option 2", "Option 3", "Option 4", "Option 5"}, function(bool)
-    print(bool)
+win:Dropdown("dropdown", {"Option 1", "Option 2", "Option 3", "Option 4", "Option 5"}, function(selectedOption)
+    print("Выбранный вариант:", selectedOption)
 end)
